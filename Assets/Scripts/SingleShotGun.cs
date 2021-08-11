@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class SingleShotGun : Gun
 {
+	public AudioSource audioSource;
+
 	[SerializeField] Camera cam;
 
 	PhotonView PV;
@@ -21,6 +23,7 @@ public class SingleShotGun : Gun
 
 	void Shoot()
 	{
+		audioSource.Play();
 		Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f));
 		ray.origin = cam.transform.position;
 		if(Physics.Raycast(ray, out RaycastHit hit))
@@ -37,6 +40,7 @@ public class SingleShotGun : Gun
         if(colliders.Length != 0)
         {
             GameObject bulletImpactObj = Instantiate(bulletImpactPrefab, hitPosition, Quaternion.identity);
+			Destroy(bulletImpactObj, 10f);
             bulletImpactObj.transform.SetParent(colliders[0].transform);
         }
     }

@@ -4,6 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using TMPro;
 using Photon.Realtime;
+using UnityEngine.SceneManagement;
 
 public class Launcher : MonoBehaviourPunCallbacks
 {
@@ -18,6 +19,8 @@ public class Launcher : MonoBehaviourPunCallbacks
 	[SerializeField] GameObject roomListItemPrefab;
 	[SerializeField] GameObject playerListItemPrefab;
 	[SerializeField] GameObject startGameButton;
+
+	private Dictionary<string, GameObject> roomButtons = new Dictionary<string, GameObject>();
 
 	void Awake()
     {
@@ -108,16 +111,27 @@ public class Launcher : MonoBehaviourPunCallbacks
     }
 
 	public override void OnRoomListUpdate(List<RoomInfo> roomList)
-	{
-		foreach (Transform trans in roomListContent)
-		{
-			Destroy(trans.gameObject);
-		}
+	{	
 		for (int i = 0; i < roomList.Count; i++)
         {
 			if (roomList[i].RemovedFromList)
-				continue;
-			Instantiate(roomListItemPrefab, roomListContent).GetComponent<RoomListItem>().SetUp(roomList[i]);
+			{
+				// remove the right room button from roomListContent for this roomList[i] item
+				if(roomButtons.ContainsKey(roomList[i].Name))
+				{
+					Destroy(roomButtons[roomList[i].Name]);
+					roomButtons.Remove(roomList[i].Name);
+				}
+			}
+			else
+			{
+				if(roomButtons.ContainsKey(roomList[i].Name) == false)
+				{
+					var gameObject = Instantiate(roomListItemPrefab, roomListContent);
+					gameObject.GetComponent<RoomListItem>().SetUp(roomList[i]);
+					roomButtons.Add(roomList[i].Name, gameObject);
+				}
+			}
 		}
 	}
 

@@ -1,17 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
-public class CursorHide : MonoBehaviour
-{
-    void Start()
+using System.Collections;
+ 
+public class CursorHide : MonoBehaviour {
+ 
+    public bool lockCursor = true;
+ 
+    void Update ()
     {
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-    }
-
-    void Update()
-    {
-
+ 
+        // pressing esc toggles between hide/show
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            lockCursor = !lockCursor;
+        }
+ 
+        Cursor.lockState = lockCursor?CursorLockMode.Locked:CursorLockMode.None;
+        Cursor.visible = !lockCursor;
     }
 }
